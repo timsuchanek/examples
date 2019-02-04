@@ -52,26 +52,26 @@ struct User {
     pub age: u64,
 }
 
-fn make_user<'a>(mut cx: &'a FunctionContext) -> Handle<'a, JsObject> {
+fn get_array_with_object(mut cx: FunctionContext) -> JsResult<JsArray> {
+    let array: Handle<JsArray> = JsArray::new(&mut cx, 1);
+
     let user = User {
         name: "Hans".to_string(),
         email: "a@a.de".to_string(),
         age: 30,
     };
-    let object = JsObject::new(cx.as_ref());
+
+    let object = JsObject::new(&mut cx);
     let name = cx.string(&user.name);
     let email = cx.string(&user.email);
     let age = cx.number(user.age as f64);
+
     object.set(&mut cx, "name", name).unwrap();
     object.set(&mut cx, "email", email).unwrap();
     object.set(&mut cx, "age", age).unwrap();
-    object
-}
 
-fn get_array_with_object(mut cx: FunctionContext) -> JsResult<JsArray> {
-    let array: Handle<JsArray> = JsArray::new(&mut cx, 1);
-    let user = make_user(&mut cx);
-    array.set(&mut cx, 0, user)?;
+    array.set(&mut cx, 0, object).unwrap();
+
     Ok(array)
 }
 

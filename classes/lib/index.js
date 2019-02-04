@@ -1,7 +1,9 @@
-const addon = require('../native/index.node');
+const addon = require('../native/index.node')
 
-const { User } = addon;
+const { User } = addon
 
-new User(0, 'John', 'Doe', 'johndoe@gmail.com');
+const x = new User(0, 'John', 'Doe', 'johndoe@gmail.com')
 
-module.exports = addon;
+console.log(x)
+
+module.exports = addon

@@ -46,11 +46,41 @@ fn return_js_array_with_string(mut cx: FunctionContext) -> JsResult<JsArray> {
     Ok(array)
 }
 
+struct User {
+    pub name: String,
+    pub email: String,
+    pub age: u64,
+}
+
+fn make_user<'a>(mut cx: &'a FunctionContext) -> Handle<'a, JsObject> {
+    let user = User {
+        name: "Hans".to_string(),
+        email: "a@a.de".to_string(),
+        age: 30,
+    };
+    let object = JsObject::new(cx.as_ref());
+    let name = cx.string(&user.name);
+    let email = cx.string(&user.email);
+    let age = cx.number(user.age as f64);
+    object.set(&mut cx, "name", name).unwrap();
+    object.set(&mut cx, "email", email).unwrap();
+    object.set(&mut cx, "age", age).unwrap();
+    object
+}
+
+fn get_array_with_object(mut cx: FunctionContext) -> JsResult<JsArray> {
+    let array: Handle<JsArray> = JsArray::new(&mut cx, 1);
+    let user = make_user(&mut cx);
+    array.set(&mut cx, 0, user)?;
+    Ok(array)
+}
+
 register_module!(mut m, {
     m.export_function("convertVecToArray", convert_vec_to_array)?;
     m.export_function("convertJsArrayToVec", convert_js_array_to_vec)?;
     m.export_function("returnJsArray", return_empty_js_array)?;
     m.export_function("returnJsArrayWithNumber", return_js_array_with_number)?;
     m.export_function("returnJsArrayWithString", return_js_array_with_string)?;
+    m.export_function("getArrayWithObject", get_array_with_object)?;
     Ok(())
 });
